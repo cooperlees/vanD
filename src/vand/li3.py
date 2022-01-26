@@ -51,6 +51,7 @@ class Li3Battery:
                 for character in service.characteristics:
                     await client.start_notify(character.uuid, self._telementary_handler)
 
-            # Block while we read bluetooth lte
+            # Block while we read Bluetooth LE
+            # TODO: Find if a better asyncio way to allow clean exit
             while True:
                 await asyncio.sleep(1)
