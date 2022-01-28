@@ -28,17 +28,14 @@ class Li3Battery:
         self.str_data = ""
 
     def _telementary_handler(self, sender: str, data: bytes) -> None:
-        # Seems last event in series is a bit shorter
-        # and no idea what &,1,114,006880 is.. throw it away for now
-        if len(data) == 16:
-            print(data)
-            self.str_data = ""
-            self.raw_data = b""
-            return
-
         self.raw_data = data
-        self.str_data = data.decode("ascii")
-        print(self.str_data)
+        tmp_str_data = data.decode("ascii")
+        if tmp_str_data.startswith(","):
+            self.str_data += tmp_str_data.strip()
+            print(self.str_data)
+        # no idea what &,1,114,006880 is.. throw it away for now
+        elif '&' not in tmp_str_data:
+            self.str_data = tmp_str_data
 
     async def listen(self) -> None:
         device = await BleakScanner.find_device_by_address(
