@@ -1,12 +1,25 @@
 import asyncio
 import logging
-from typing import Awaitable, Dict, List
+from typing import Awaitable, Dict, List, NamedTuple, Optional
 
 from bleak import BleakClient, BleakScanner  # type: ignore
 from bleak.exc import BleakError  # type: ignore
 
 
 LOG = logging.getLogger(__name__)
+
+# 1309,327,327,328,327,32,39,0,79,000000
+class Li3TelemetryStats(NamedTuple):
+    battery_voltage: float
+    cell_1_voltage: float
+    cell_2_voltage: float
+    cell_3_voltage: float
+    cell_4_voltage: float
+    bms_temperature: float
+    battery_temperature: float
+    battery_power: float  # This will be amps or watts ...
+    battery_soc: float
+    fault_code: str
 
 
 class Li3Battery:
@@ -26,15 +39,29 @@ class Li3Battery:
         self.timeout = timeout
 
         self.str_data = ""
+        self.stats: Optional[Li3TelemetryStats] = None
 
     def _telementary_handler(self, sender: str, data: bytes) -> None:
         self.raw_data = data
         tmp_str_data = data.decode("ascii")
         if tmp_str_data.startswith(","):
             self.str_data += tmp_str_data.strip()
-            print(self.str_data)
+            csv_data = self.str_data.split(",")
+            self.stats = Li3TelemetryStats(
+                float(csv_data[0]),
+                float(csv_data[1]),
+                float(csv_data[2]),
+                float(csv_data[3]),
+                float(csv_data[4]),
+                float(csv_data[5]),
+                float(csv_data[6]),
+                float(csv_data[7]),
+                float(csv_data[8]),
+                csv_data[9],
+            )
+            print(self.stats)
         # no idea what &,1,114,006880 is.. throw it away for now
-        elif '&' not in tmp_str_data:
+        elif "&" not in tmp_str_data:
             self.str_data = tmp_str_data
 
     async def listen(self) -> None:
