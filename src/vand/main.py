@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
 import asyncio
+import json
 import logging
-from typing import Union
+from pathlib import Path
+from typing import Any, Awaitable, Dict, List, Union
 
 import click
+
+from vand.li3 import RevelBatteries
 
 
 LOG = logging.getLogger(__name__)
@@ -24,10 +28,31 @@ def _handle_debug(
     return debug
 
 
+def _load_config(conf_path: Path) -> Dict:
+    if not conf_path.exists():
+        LOG.error(f"{conf_path} does not exist. Exiting.")
+        return {}
+    with conf_path.open("rb") as cfp:
+        return json.load(cfp)
+
+
+def _start_modules(conf: Dict[str, Any]) -> List[Awaitable]:
+    coros: List[Awaitable] = []
+    if "li3" in conf.keys():
+        coros.extend(RevelBatteries(conf).get_coros())
+        LOG.debug("Added li3 coros ...")
+    LOG.info(f"Loaded {len(coros)} modules ... Starting ...")
+    return coros
+
+
 async def async_main(
     debug: bool,
-    config: str,
+    config_path: str,
 ) -> int:
+    conf = _load_config(Path(config_path))
+    if not conf:
+        return 1
+    await asyncio.gather(*_start_modules(conf))
     return 0
 
 
@@ -39,7 +64,7 @@ async def async_main(
     show_default=True,
     help="Turn on debug logging",
 )
-@click.argument("config", nargs=1)
+@click.argument("config-path", nargs=1)
 @click.pass_context
 def main(
     ctx: click.Context,

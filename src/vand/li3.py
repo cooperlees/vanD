@@ -1,7 +1,12 @@
 import asyncio
+import logging
+from typing import Awaitable, Dict, List
 
-from bleak import BleakClient, BleakScanner
-from bleak.exc import BleakError
+from bleak import BleakClient, BleakScanner  # type: ignore
+from bleak.exc import BleakError  # type: ignore
+
+
+LOG = logging.getLogger(__name__)
 
 
 class Li3Battery:
@@ -18,15 +23,17 @@ class Li3Battery:
         self.float = timeout
         self.service_uuid = service_uuid
         self.characteristic = characteristic
-        self.raw_data = ""
+        self.timeout = timeout
+
+        self.str_data = ""
 
     def _telementary_handler(self, sender: str, data: bytes) -> None:
         # Seems last event in series is a bit shorter
         # and no idea what &,1,114,006880 is.. throw it away for now
         if len(data) == 16:
             print(data)
-            self.data = ""
-            self.raw_data = ""
+            self.str_data = ""
+            self.raw_data = b""
             return
 
         self.raw_data = data
@@ -55,3 +62,15 @@ class Li3Battery:
             # TODO: Find if a better asyncio way to allow clean exit
             while True:
                 await asyncio.sleep(1)
+
+
+class RevelBatteries:
+    def __init__(self, config: Dict) -> None:
+        self.config = config
+        self.batteries = []
+        for id, battery_settings in self.config["li3"].items():
+            LOG.debug(f"Loading battery {id}: {battery_settings}")
+            self.batteries.append(Li3Battery(**battery_settings))
+
+    def get_coros(self) -> List[Awaitable]:
+        return [b.listen() for b in self.batteries]

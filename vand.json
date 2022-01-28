@@ -1,0 +1,21 @@
+{
+    "vanD": {
+        "comment": "Modules load via top level JSON Keys. This section is generic options for vanD"
+    },
+    "li3": {
+        "1": {
+            "dev_name": "Li3-093020434",
+            "mac_address": "64:69:4E:38:44:B3",
+            "service_uuid": "0000ffe0-0000-1000-8000-00805f9b34fb",
+            "characteristic": "0000ffe1-0000-1000-8000-00805f9b34fb",
+            "timeout": 5.0
+        },
+        "2": {
+            "dev_name": "Li3-093020432",
+            "mac_address": "64:69:4E:35:CE:71",
+            "service_uuid": "0000ffe0-0000-1000-8000-00805f9b34fb",
+            "characteristic": "0000ffe1-0000-1000-8000-00805f9b34fb",
+            "timeout": 5.0
+        }
+    }
+}
