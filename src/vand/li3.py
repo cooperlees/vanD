@@ -49,11 +49,11 @@ class Li3Battery:
             self.str_data += tmp_str_data.strip()
             csv_data = self.str_data.split(",")
             self.stats = Li3TelemetryStats(
-                float(csv_data[0]) / 10,
-                float(csv_data[1]) / 10,
-                float(csv_data[2]) / 10,
-                float(csv_data[3]) / 10,
-                float(csv_data[4]) / 10,
+                float(csv_data[0]) / 100,
+                float(csv_data[1]) / 100,
+                float(csv_data[2]) / 100,
+                float(csv_data[3]) / 100,
+                float(csv_data[4]) / 100,
                 float(csv_data[5]),
                 float(csv_data[6]),
                 float(csv_data[7]),
