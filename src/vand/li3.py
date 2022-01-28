@@ -8,6 +8,7 @@ from bleak.exc import BleakError  # type: ignore
 
 LOG = logging.getLogger(__name__)
 
+
 # 1309,327,327,328,327,32,39,0,79,000000
 class Li3TelemetryStats(NamedTuple):
     battery_voltage: float
@@ -48,11 +49,11 @@ class Li3Battery:
             self.str_data += tmp_str_data.strip()
             csv_data = self.str_data.split(",")
             self.stats = Li3TelemetryStats(
-                float(csv_data[0]),
-                float(csv_data[1]),
-                float(csv_data[2]),
-                float(csv_data[3]),
-                float(csv_data[4]),
+                float(csv_data[0] / 10),
+                float(csv_data[1] / 10),
+                float(csv_data[2] / 10),
+                float(csv_data[3] / 10),
+                float(csv_data[4] / 10),
                 float(csv_data[5]),
                 float(csv_data[6]),
                 float(csv_data[7]),
