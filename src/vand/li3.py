@@ -160,7 +160,9 @@ class RevelBatteries:
             stat_collect_start_time = time()
             for battery in self.batteries:
                 if not battery.stats:
-                    LOG.error(f"{battery.dev_name} does not have valid stats ... skipping.")
+                    LOG.error(
+                        f"{battery.dev_name} does not have valid stats ... skipping."
+                    )
                     continue
 
                 for stat_name, prom_metric in self.prom_stats.items():
@@ -174,7 +176,9 @@ class RevelBatteries:
                         getattr(battery.stats, stat_name),
                     )
             run_time = time() - stat_collect_start_time
-            sleep_time = refresh_interval - run_time if run_time < refresh_interval else 0
+            sleep_time = (
+                refresh_interval - run_time if run_time < refresh_interval else 0
+            )
             LOG.info(
                 f"{RevelBatteries.__name__} has refreshed prometheus stats. Sleeping for {sleep_time}"
             )
