@@ -155,28 +155,30 @@ class RevelBatteries:
             ),
         }
 
-    async def stats_refresh(self, refresh_interval: float = 10.0) -> None:
-        start_time = time()
-        for battery in self.batteries:
-            if not battery.stats:
-                LOG.debug(f"{battery.dev_name} does not have valid stats ... skipping.")
-                continue
+    async def stats_refresh(self, refresh_interval) -> None:
+        while True:
+            stat_collect_start_time = time()
+            for battery in self.batteries:
+                if not battery.stats:
+                    LOG.error(f"{battery.dev_name} does not have valid stats ... skipping.")
+                    continue
 
-            for stat_name, prom_metric in self.prom_stats.items():
-                prom_metric.set(
-                    {
-                        "dev_name": battery.dev_name,
-                        "mac_address": battery.mac_address,
-                        "characteristic": battery.characteristic,
-                        "service_uuid": battery.service_uuid,
-                    },
-                    getattr(battery.stats, stat_name),
-                )
-            sleep_time = refresh_interval - (time() - start_time)
+                for stat_name, prom_metric in self.prom_stats.items():
+                    prom_metric.set(
+                        {
+                            "dev_name": battery.dev_name,
+                            "mac_address": battery.mac_address,
+                            "characteristic": battery.characteristic,
+                            "service_uuid": battery.service_uuid,
+                        },
+                        getattr(battery.stats, stat_name),
+                    )
+            run_time = time() - stat_collect_start_time
+            sleep_time = refresh_interval - run_time if run_time < refresh_interval else 0
             LOG.info(
                 f"{RevelBatteries.__name__} has refreshed prometheus stats. Sleeping for {sleep_time}"
             )
-            asyncio.sleep(sleep_time)
+            await asyncio.sleep(sleep_time)
 
     def get_awaitables(self, refresh_interval: float) -> Sequence[Awaitable[Any]]:
         coros = [self.stats_refresh(refresh_interval)]
