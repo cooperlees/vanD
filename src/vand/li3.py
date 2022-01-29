@@ -25,7 +25,7 @@ class Li3TelemetryStats:
     battery_temperature: float
     battery_power: float  # This will be amps or watts ...
     battery_soc: float
-    fault_code: str
+    fault_code: int  # This is hex converted to an int
 
 
 class Li3Battery:
@@ -63,7 +63,7 @@ class Li3Battery:
                 float(csv_data[6]),
                 float(csv_data[7]),
                 float(csv_data[8]),
-                csv_data[9],
+                int(csv_data[9], 16),
             )
         # no idea what &,1,114,006880 is.. throw it away for now
         elif "&" not in tmp_str_data:
