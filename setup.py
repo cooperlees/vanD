@@ -19,7 +19,7 @@ ptr_params = {
 
 setup(
     name="vand",
-    version="2022.1.25",
+    version="2022.1.29",
     description=("Daemon for all your Van Life needs ..."),
     packages=find_packages(where="src"),
     package_dir={"": "src"},
