@@ -94,9 +94,12 @@ class Li3Battery:
 
 
 class RevelBatteries:
-    def __init__(self, config: Dict, registry: Registry) -> None:
+    def __init__(
+        self, config: Dict, registry: Registry, stat_preifx: str = "li3_"
+    ) -> None:
         self.config = config
         self.prom_registry = registry
+        self.stat_preifx = stat_preifx
         self.batteries = []
         for id, battery_settings in self.config["li3"].items():
             LOG.debug(f"Loading battery {id}: {battery_settings}")
@@ -104,52 +107,52 @@ class RevelBatteries:
 
         self.prom_stats = {
             "battery_voltage": Gauge(
-                "battery_voltage",
+                f"{self.stat_preifx}battery_voltage",
                 "Current volts of the battery",
                 registry=self.prom_registry,
             ),
             "cell_1_voltage": Gauge(
-                "cell_1_voltage",
+                f"{self.stat_preifx}cell_1_voltage",
                 "Battery Cell 1 Voltage",
                 registry=self.prom_registry,
             ),
             "cell_2_voltage": Gauge(
-                "cell_2_voltage",
+                f"{self.stat_preifx}cell_2_voltage",
                 "Battery Cell 2 Voltage",
                 registry=self.prom_registry,
             ),
             "cell_3_voltage": Gauge(
-                "cell_3_voltage",
+                f"{self.stat_preifx}cell_3_voltage",
                 "Battery Cell 3 Voltage",
                 registry=self.prom_registry,
             ),
             "cell_4_voltage": Gauge(
-                "cell_4_voltage",
+                f"{self.stat_preifx}cell_4_voltage",
                 "Battery Cell 4 Voltage",
                 registry=self.prom_registry,
             ),
             "bms_temperature": Gauge(
-                "bms_temperature",
+                f"{self.stat_preifx}bms_temperature",
                 "The temperature of the BMS",
                 registry=self.prom_registry,
             ),
             "battery_temperature": Gauge(
-                "battery_temperature",
+                f"{self.stat_preifx}battery_temperature",
                 "Battery temperature - Remember won't charge if to cold/hot",
                 registry=self.prom_registry,
             ),
             "battery_power": Gauge(
-                "battery_power",
+                f"{self.stat_preifx}battery_power",
                 "Battery current power charge or draw",
                 registry=self.prom_registry,
             ),
             "battery_soc": Gauge(
-                "battery_soc",
+                f"{self.stat_preifx}battery_soc",
                 "Percentage of battery charge left",
                 registry=self.prom_registry,
             ),
             "fault_code": Gauge(
-                "fault_code",
+                f"{self.stat_preifx}fault_code",
                 "Type of Battery fault (Hex converted to int)",
                 registry=self.prom_registry,
             ),
