@@ -183,7 +183,8 @@ class RevelBatteries:
                 refresh_interval - run_time if run_time < refresh_interval else 0
             )
             LOG.info(
-                f"{RevelBatteries.__name__} has refreshed prometheus stats. Sleeping for {sleep_time}"
+                f"{RevelBatteries.__name__} has refreshed prometheus stats in {run_time}s. "
+                + f"Sleeping for {sleep_time}s"
             )
             await asyncio.sleep(sleep_time)
 
