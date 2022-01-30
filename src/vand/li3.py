@@ -6,8 +6,7 @@ from typing import Any, Awaitable, Dict, Optional, Sequence
 
 from aioprometheus import Gauge
 from aioprometheus.collectors import Registry
-from bleak import BleakClient, BleakScanner  # type: ignore
-from bleak.exc import BleakError  # type: ignore
+from bleak import BleakClient  # type: ignore
 
 
 LOG = logging.getLogger(__name__)
@@ -70,46 +69,40 @@ class Li3Battery:
             self.str_data = tmp_str_data
 
     async def listen(self) -> None:
-        device = await BleakScanner.find_device_by_address(
-            self.mac_address, timeout=self.timeout
-        )
-        if not device:
-            raise BleakError(
-                f"A device with address {self.mac_address} could not be found."
-            )
-
-        LOG.info(f"Attempting to start a notify for {self.dev_name}:{device}")
+        LOG.info(f"Attempting to start a notify for {self.dev_name}")
         started_notify_uuid = ""
-        async with BleakClient(device) as client:
+        async with BleakClient(self.mac_address) as client:
             services = await client.get_services()
             for service in services:
                 if service.uuid != self.service_uuid:
                     continue
 
-                for character in service.characteristics:
-                    if character.uuid == self.characteristic:
+                for characteristic in service.characteristics:
+                    if characteristic.uuid == self.characteristic:
                         LOG.info(
                             f"Starting notify for {self.dev_name}:{self.service_uuid}:"
                             + f"{self.characteristic}"
                         )
                         await client.start_notify(
-                            character.uuid, self._telementary_handler
+                            characteristic.uuid, self._telementary_handler
                         )
-                        started_notify_uuid = character.uuid
+                        started_notify_uuid = characteristic.uuid
 
-                if not started_notify_uuid:
-                    LOG.error(
-                        f"{self.dev_name} is not listening to {started_notify_uuid}!!"
-                    )
-                    return
-                # Block while we read Bluetooth LE
-                # TODO: Find if a better asyncio way to allow clean exit
-                # Always cleanup the notify
-                try:
-                    while True:
-                        await asyncio.sleep(1)
-                finally:
-                    await client.stop_notify(started_notify_uuid)
+            if not started_notify_uuid:
+                LOG.error(
+                    f"{self.dev_name} is not listening to {started_notify_uuid}!!"
+                )
+                return
+
+            # Block while we read Bluetooth LE
+            # TODO: Find if a better asyncio way to allow clean exit
+            # Always cleanup the notify
+            try:
+                while True:
+                    await asyncio.sleep(1)
+            finally:
+                LOG.info(f"Cleaning up bleak notify for {started_notify_uuid}")
+                await client.stop_notify(started_notify_uuid)
 
 
 class RevelBatteries:
@@ -197,6 +190,7 @@ class RevelBatteries:
                         },
                         getattr(battery.stats, stat_name),
                     )
+                LOG.info(f"Updated {battery.dev_name} stats")
             run_time = time() - stat_collect_start_time
             sleep_time = (
                 refresh_interval - run_time if run_time < refresh_interval else 0
