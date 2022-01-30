@@ -6,7 +6,7 @@ After=network.target
 User=nobody
 Group=daemon
 Type=simple
-ExecStart=/opt/venvs/vanD/bin/vanD /etc/vand.json
+ExecStart=/usr/local/bin/vanD /etc/vand.json
 Restart=on-failure
 RestartSec=1
 
