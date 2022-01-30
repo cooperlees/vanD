@@ -78,7 +78,8 @@ class Li3Battery:
                 f"A device with address {self.mac_address} could not be found."
             )
 
-        started_notify = False
+        LOG.info(f"Attempting to start a notify for {self.dev_name}:{device}")
+        started_notify_uuid = ""
         async with BleakClient(device) as client:
             services = await client.get_services()
             for service in services:
@@ -94,15 +95,21 @@ class Li3Battery:
                         await client.start_notify(
                             character.uuid, self._telementary_handler
                         )
-                        started_notify = True
+                        started_notify_uuid = character.uuid
 
-            if not started_notify:
-                LOG.error(f"{self.dev_name} is not listening!!")
-                return
-            # Block while we read Bluetooth LE
-            # TODO: Find if a better asyncio way to allow clean exit
-            while True:
-                await asyncio.sleep(1)
+                if not started_notify_uuid:
+                    LOG.error(
+                        f"{self.dev_name} is not listening to {started_notify_uuid}!!"
+                    )
+                    return
+                # Block while we read Bluetooth LE
+                # TODO: Find if a better asyncio way to allow clean exit
+                # Always cleanup the notify
+                try:
+                    while True:
+                        await asyncio.sleep(1)
+                finally:
+                    await client.stop_notify(started_notify_uuid)
 
 
 class RevelBatteries:
