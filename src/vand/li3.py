@@ -85,7 +85,14 @@ class Li3Battery:
                     continue
 
                 for character in service.characteristics:
-                    await client.start_notify(character.uuid, self._telementary_handler)
+                    if character.uuid == self.characteristic:
+                        LOG.info(
+                            f"Starting notify for {self.dev_name}:{self.service_uuid}:"
+                            + f"{self.characteristic}"
+                        )
+                        await client.start_notify(
+                            character.uuid, self._telementary_handler
+                        )
 
             # Block while we read Bluetooth LE
             # TODO: Find if a better asyncio way to allow clean exit
