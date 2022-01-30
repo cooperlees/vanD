@@ -3,13 +3,14 @@
 _All your recreational van data collecting could ever need!_
 
 vanD is a Ubuntu running Raspberry Pi telemetry collection daemon. It's been design to support various
-components/modules and was written for @cooperlees [2021 Winnebago Revel](https://vanlife.cooperlees.com/).
-My main goal is to collect timeseries data from a cloud VPS for monitoring and baseline components when the RV has LTE/5G/Wifi available.
+components/modules and was written for @cooperlees's [2021 Winnebago Revel](https://vanlife.cooperlees.com/).
+My main goal is to collect timeseries data (via [Prometheus](https://prometheus.io/docs/introduction/overview/))
+from a cloud VPS for monitoring and baseline components when the RV has LTE/5G/Wifi available.
 
 ## Supported Components / Modules
 
-- Li3 Batteries
-  - Read the Bluetooth LE serial data and expose via pro
+- Lithionics (Li3) Batteries
+  - Read the Bluetooth LE serial data and convert to Prometheus gauges
 
 # Install
 
@@ -40,8 +41,8 @@ To start vanD all you need to do is pass a config file:
 
 # Configuration
 
-vanD is all JSON file driven. There is a main `vanD` section for generic options
-and then will have a section per plugin.
+vanD is all JSON configuration file driven. There is a main `vanD` section for generic options
+and then will have a section per plugin to enable and set settings.
 
 ## vanD Options
 
@@ -52,7 +53,7 @@ and then will have a section per plugin.
 
 # Development
 
-The code is all >= Python 3.9 asyncio code.
+The code is all >= **Python 3.9 asyncio** code.
 
 ```console
 python3 -m venv [--upgrade-deps] /tmp/tv
