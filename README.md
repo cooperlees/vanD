@@ -51,6 +51,11 @@ and then will have a section per plugin to enable and set settings.
 - `statistics_refresh_interval`: How often to update Prometheus Metrics from each plugin
 - `web_port`: TCP Port for the local Web Dashboard
 
+# Grafana Dashboards
+
+- [Li3 Dashboard](https://grafana.com/grafana/dashboards/15649)
+  - Dashboard showing all the stats collected by vanD for Li3 Batteries
+
 # Development
 
 The code is all >= **Python 3.9 asyncio** code.
