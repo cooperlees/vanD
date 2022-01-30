@@ -34,7 +34,9 @@ Optional - Run via [systemd](https://www.freedesktop.org/wiki/Software/systemd/)
 - `web_port`: On Box Dashboard Port
   - Default: 8080
 
-To ins
+To start vanD all you need to do is pass a config file:
+
+- `vanD [--debug] /path/to/vand.json`
 
 # Configuration
 
