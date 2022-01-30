@@ -6,7 +6,9 @@ from typing import Any, Awaitable, Dict, Optional, Sequence
 
 from aioprometheus import Gauge
 from aioprometheus.collectors import Registry
-from bleak import BleakClient  # type: ignore
+from bleak import BleakClient, BleakScanner  # type: ignore
+from bleak.backends.device import BLEDevice  # type: ignore
+from bleak.exc import BleakError  # type: ignore
 
 
 LOG = logging.getLogger(__name__)
@@ -36,6 +38,7 @@ class Li3Battery:
         characteristic: str,
         timeout: float,
     ) -> None:
+        self.bleak_device: Optional[BLEDevice] = None
         self.dev_name = dev_name
         self.mac_address = mac_address
         self.float = timeout
@@ -69,9 +72,12 @@ class Li3Battery:
             self.str_data = tmp_str_data
 
     async def listen(self) -> None:
+        if not self.bleak_device:
+            raise BleakError(f"{self.dev_name} was not found in bleak scan!")
+
         LOG.info(f"Attempting to start a notify for {self.dev_name}")
         started_notify_uuid = ""
-        async with BleakClient(self.mac_address) as client:
+        async with BleakClient(self.bleak_device) as client:
             services = await client.get_services()
             for service in services:
                 if service.uuid != self.service_uuid:
@@ -170,6 +176,20 @@ class RevelBatteries:
             ),
         }
 
+    async def scan_devices(self, scan_time: float) -> None:
+        service_uuids = {b.service_uuid for b in self.batteries}
+        LOG.info(f"Scanning for BLE Batteries with service_uuids {service_uuids}")
+        scanner = BleakScanner(service_uuids=service_uuids)
+        discovered_devices = await scanner.discover(timeout=scan_time)
+        found_devs = 0
+        for dd in discovered_devices:
+            for b in self.batteries:
+                if dd.address == b.mac_address:
+                    b.bleak_device = dd
+                    found_devs += 1
+                    continue
+        LOG.info(f"Found {found_devs} BLE Batteries with service_uuids {service_uuids}")
+
     async def stats_refresh(self, refresh_interval) -> None:
         while True:
             stat_collect_start_time = time()
@@ -201,7 +221,7 @@ class RevelBatteries:
             )
             await asyncio.sleep(sleep_time)
 
-    def get_awaitables(self, refresh_interval: float) -> Sequence[Awaitable[Any]]:
+    async def get_awaitables(self, refresh_interval: float) -> Sequence[Awaitable[Any]]:
         coros = [self.stats_refresh(refresh_interval)]
         coros.extend([b.listen() for b in self.batteries])
         return coros

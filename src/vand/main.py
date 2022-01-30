@@ -44,7 +44,9 @@ def _load_config(conf_path: Path) -> Dict:
         return json.load(cfp)
 
 
-def _load_modules(conf: Dict[str, Any]) -> Tuple[List[Awaitable], List[Awaitable]]:
+async def _load_modules(
+    conf: Dict[str, Any]
+) -> Tuple[List[Awaitable], List[Awaitable]]:
     cleanup_coros: List[Awaitable] = []
     main_coros: List[Awaitable] = []
     no_modules = True
@@ -52,10 +54,10 @@ def _load_modules(conf: Dict[str, Any]) -> Tuple[List[Awaitable], List[Awaitable
 
     # Monitor Li3 Batteries if configured
     if "li3" in conf.keys():
+        rb = RevelBatteries(conf, prom_registry)
+        await rb.scan_devices(conf["vanD"]["scan_time"])
         main_coros.extend(
-            RevelBatteries(conf, prom_registry).get_awaitables(
-                conf["vanD"]["statistics_refresh_interval"]
-            )
+            await rb.get_awaitables(conf["vanD"]["statistics_refresh_interval"])
         )
         LOG.info("Loaded li3 awaitables ...")
         no_modules = False
@@ -83,7 +85,7 @@ async def async_main(
     conf = _load_config(Path(config_path))
     if not conf:
         return 1
-    main_coros, cleanup_coros = _load_modules(conf)
+    main_coros, cleanup_coros = await _load_modules(conf)
     # TODO: Handle cleanup and exiting cleanly from signals - e.g. SIGTERM
     try:
         await asyncio.gather(*main_coros)

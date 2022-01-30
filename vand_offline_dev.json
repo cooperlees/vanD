@@ -2,7 +2,9 @@
     "vanD": {
         "comment": "Modules load via top level JSON Keys. This section is generic options for vanD",
         "prometheus_exporter_port": 31337,
-        "refresh_interval_comment": "How long between module prometheus exporter stats update",
+        "scan_time_comment": "How long to scan for BLE devices",
+        "scan_time": 5.0,
+        "statistics_refresh_interval_comment": "How long between module prometheus exporter stats update",
         "statistics_refresh_interval": 30.0,
         "web_port": 8080
     },
