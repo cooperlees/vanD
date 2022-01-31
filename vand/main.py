@@ -41,7 +41,7 @@ def _load_config(conf_path: Path) -> Dict:
         LOG.error(f"{conf_path} does not exist. Exiting.")
         return {}
     with conf_path.open("rb") as cfp:
-        return json.load(cfp)
+        return dict(json.load(cfp))
 
 
 async def _load_modules(
@@ -106,7 +106,7 @@ async def async_main(
 @click.pass_context
 def main(
     ctx: click.Context,
-    **kwargs,
+    **kwargs: Any,
 ) -> None:
     """vanD: All your RV monitoring needs"""
     ctx.exit(asyncio.run(async_main(**kwargs)))

@@ -6,9 +6,9 @@ from typing import Any, Awaitable, Dict, Optional, Sequence
 
 from aioprometheus import Gauge
 from aioprometheus.collectors import Registry
-from bleak import BleakClient, BleakScanner  # type: ignore
-from bleak.backends.device import BLEDevice  # type: ignore
-from bleak.exc import BleakError  # type: ignore
+from bleak import BleakClient, BleakScanner
+from bleak.backends.device import BLEDevice
+from bleak.exc import BleakError
 
 
 LOG = logging.getLogger(__name__)
@@ -190,7 +190,7 @@ class RevelBatteries:
                     continue
         LOG.info(f"Found {found_devs} BLE Batteries with service_uuids {service_uuids}")
 
-    async def stats_refresh(self, refresh_interval) -> None:
+    async def stats_refresh(self, refresh_interval: float) -> None:
         while True:
             stat_collect_start_time = time()
             for battery in self.batteries:
