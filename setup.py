@@ -9,7 +9,7 @@ ptr_params = {
     "test_suite_timeout": 300,
     "required_coverage": {
         "vand/main.py": 45,
-        "vand/li3.py": 30,
+        "vand/li3.py": 54,
     },
     "run_black": True,
     "run_flake8": True,

@@ -8,6 +8,7 @@ from tempfile import TemporaryDirectory
 from click.testing import CliRunner
 
 from vand.main import _load_config, main
+from vand.tests.li3 import TestLi3Battery, TestRevelBatteries  # noqa: F401
 
 
 class TestCLI(unittest.TestCase):
