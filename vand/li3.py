@@ -49,7 +49,7 @@ class Li3Battery:
         self.str_data = ""
         self.stats: Optional[Li3TelemetryStats] = None
 
-    def _telementary_handler(self, sender: str, data: bytes) -> None:
+    def telemetry_handler(self, _sender: str, data: bytes) -> None:
         self.raw_data = data
         tmp_str_data = data.decode("ascii")
         if tmp_str_data.startswith(","):
@@ -90,7 +90,7 @@ class Li3Battery:
                             + f"{self.characteristic}"
                         )
                         await client.start_notify(
-                            characteristic.uuid, self._telementary_handler
+                            characteristic.uuid, self.telemetry_handler
                         )
                         started_notify_uuid = characteristic.uuid
 
@@ -179,7 +179,7 @@ class RevelBatteries:
     async def scan_devices(self, scan_time: float) -> None:
         service_uuids = {b.service_uuid for b in self.batteries}
         LOG.info(f"Scanning for BLE Batteries with service_uuids {service_uuids}")
-        scanner = BleakScanner(service_uuids=service_uuids)
+        scanner = BleakScanner(service_uuids=service_uuids)  # type: ignore
         discovered_devices = await scanner.discover(timeout=scan_time)
         found_devs = 0
         for dd in discovered_devices:

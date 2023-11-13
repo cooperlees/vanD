@@ -12,9 +12,9 @@ class TestLi3Battery(unittest.TestCase):
     def setUp(self) -> None:
         self.li3b = li3.Li3Battery(**TEST_LI3_CONFIG["li3"]["1"])
 
-    def test_telementary_hander(self) -> None:
+    def test_telemetry_hander(self) -> None:
         for data in FAKE_LI3_BINARY_DATA:
-            self.li3b._telementary_handler("unittest", data)
+            self.li3b.telemetry_handler("unittest", data)
         # See we have the str data we expect
         self.assertEqual("1309,327,327,328,327,32,39,0,79,000000", self.li3b.str_data)
         # Ensure stats is not None

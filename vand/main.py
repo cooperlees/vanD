@@ -10,6 +10,7 @@ import click
 from aioprometheus.collectors import Registry
 from aioprometheus.service import Service
 
+from vand.govee import Hygrometers
 from vand.li3 import RevelBatteries
 
 
@@ -60,6 +61,16 @@ async def _load_modules(
             await rb.get_awaitables(conf["vanD"]["statistics_refresh_interval"])
         )
         LOG.info("Loaded li3 awaitables ...")
+        no_modules = False
+
+    # Monitor HS0755 Temperature if configured
+    if "HS075S" in conf.keys():
+        h = Hygrometers(conf["HS075S"], prom_registry)
+        await h.scan_devices(conf["vanD"]["scan_time"])
+        main_coros.extend(
+            await h.get_awaitables(conf["vanD"]["statistics_refresh_interval"])
+        )
+        LOG.info("Loaded HS0755 awaitables ...")
         no_modules = False
 
     # Hack for developing locally to block exiting
