@@ -179,7 +179,7 @@ class RevelBatteries:
     async def scan_devices(self, scan_time: float) -> None:
         service_uuids = {b.service_uuid for b in self.batteries}
         LOG.info(f"Scanning for BLE Batteries with service_uuids {service_uuids}")
-        scanner = BleakScanner(service_uuids=service_uuids)
+        scanner = BleakScanner(service_uuids=list(service_uuids))
         discovered_devices = await scanner.discover(timeout=scan_time)
         found_devs = 0
         for dd in discovered_devices:

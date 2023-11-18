@@ -20,7 +20,7 @@ ptr_params = {
 
 setup(
     name="vand",
-    version="2022.1.29",
+    version="2023.11.18",
     description=("Daemon for all your Van Life needs ..."),
     packages=find_packages(),
     url="http://github.com/cooperlees/vanD/",
@@ -29,13 +29,13 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Development Status :: 3 - Alpha",
     ],
     entry_points={"console_scripts": ["vanD = vand.main:main"]},
     install_requires=["aiohttp", "aioprometheus[aiohttp]", "bleak", "click"],
     test_require=["ptr"],
-    python_requires=">=3.9",
+    python_requires=">=3.11",
     test_suite=ptr_params["test_suite"],
 )
