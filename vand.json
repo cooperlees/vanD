@@ -8,6 +8,15 @@
         "statistics_refresh_interval": 30.0,
         "web_port": 8080
     },
+    "HS075S": {
+        "1": {
+            "dev_name": "GVH5075_7D5D",
+            "mac_address": "A4:C1:38:31:7D:5D",
+            "service_uuid": "0000ec88-0000-1000-8000-00805f9b34fb",
+            "characteristic": "Van Center",
+            "timeout": 5.0
+        }
+    },
     "li3": {
         "1": {
             "dev_name": "Li3-093020434",
