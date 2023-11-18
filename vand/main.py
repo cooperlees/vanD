@@ -10,6 +10,7 @@ import click
 from aioprometheus.collectors import Registry
 from aioprometheus.service import Service
 
+from vand.govee import Hygrometers
 from vand.li3 import RevelBatteries
 
 
@@ -51,6 +52,15 @@ async def _load_modules(
     main_coros: List[Awaitable] = []
     no_modules = True
     prom_registry = Registry()
+
+    # Monitor HS0755 Hygrometers if configured
+    if "HS075S" in conf.keys():
+        h = Hygrometers(conf["HS075S"], prom_registry)
+        main_coros.extend(
+            await h.get_awaitables(conf["vanD"]["statistics_refresh_interval"])
+        )
+        LOG.info("Loaded HS0755 awaitables ...")
+        no_modules = False
 
     # Monitor Li3 Batteries if configured
     if "li3" in conf.keys():
