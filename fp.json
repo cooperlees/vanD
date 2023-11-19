@@ -1,0 +1,20 @@
+{
+    "vanD": {
+        "comment": "Modules load via top level JSON Keys. This section is generic options for vanD",
+        "prometheus_exporter_port": 31337,
+        "scan_time_comment": "How long to scan for BLE devices",
+        "scan_time": 5.0,
+        "statistics_refresh_interval_comment": "How long between module prometheus exporter stats update",
+        "statistics_refresh_interval": 30.0,
+        "web_port": 8080
+    },
+    "HS075S": {
+        "1": {
+            "dev_name": "Living_Room_Thermo",
+            "mac_address": "A4:C1:38:54:19:E1",
+            "service_uuid": "0000ec88-0000-1000-8000-00805f9b34fb",
+            "characteristic": "",
+            "timeout": 5.0
+        }
+    }
+}

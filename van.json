@@ -10,10 +10,17 @@
     },
     "HS075S": {
         "1": {
-            "dev_name": "GVH5075_7D5D",
+            "dev_name": "Van_Center_Thermo",
             "mac_address": "A4:C1:38:31:7D:5D",
             "service_uuid": "0000ec88-0000-1000-8000-00805f9b34fb",
-            "characteristic": "Van Center",
+            "characteristic": "",
+            "timeout": 5.0
+        },
+        "2": {
+            "dev_name": "Van_Rear_Thermo",
+            "mac_address": "A4:C1:38:17:54:34",
+            "service_uuid": "0000ec88-0000-1000-8000-00805f9b34fb",
+            "characteristic": "",
             "timeout": 5.0
         }
     },
